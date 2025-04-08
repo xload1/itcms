@@ -371,29 +371,54 @@
   </div>
 </section>
 
+
 <!-- Login Section -->
 <section id="login" class="section">
   <div class="container">
     <h2 class="text-center mb-5">Login</h2>
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <form>
+
+        <!-- Show a general loginError if credentials are bad -->
+        <div th:if="${loginError}" class="alert alert-danger" th:text="${loginError}"></div>
+
+        <!-- Bind directly to "loginForm" to re-display values on error, if needed -->
+        <form th:action="@{/login}" th:object="${loginForm}" method="post">
+
+          <!-- If using Spring Security with CSRF -->
+          <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
+
           <div class="mb-3">
-            <label for="loginEmail" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
+            <label for="loginUsername" class="form-label">Username</label>
+            <input type="text" class="form-control"
+                   id="loginUsername"
+                   th:field="*{username}"
+                   placeholder="Enter your username">
+            <!-- Show validation error for username -->
+            <p class="text-danger" th:if="${#fields.hasErrors('username')}"
+               th:errors="*{username}">Invalid username</p>
           </div>
+
           <div class="mb-3">
             <label for="loginPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+            <input type="password" class="form-control"
+                   id="loginPassword"
+                   th:field="*{password}"
+                   placeholder="Password">
+            <!-- Show validation error for password -->
+            <p class="text-danger" th:if="${#fields.hasErrors('password')}"
+               th:errors="*{password}">Invalid password</p>
           </div>
+
           <button type="submit" class="btn btn-primary w-100">Login</button>
-          <p class="mt-3 text-center">Don't have an account? <a href="#register">Register here</a></p>
+          <p class="mt-3 text-center">
+            Don't have an account? <a href="#register">Register here</a>
+          </p>
         </form>
       </div>
     </div>
   </div>
 </section>
-<br><br><br><br><br><br><br><br>
 
 <!-- Register Section -->
 <section id="register" class="section bg-light">
@@ -401,41 +426,87 @@
     <h2 class="text-center mb-5">Register</h2>
     <div class="row justify-content-center">
       <div class="col-md-8">
-        <form>
-          <h4>Personal Information</h4>
+
+        <!-- Show a general registrationError if the user already exists or something failed -->
+        <div th:if="${registrationError}" class="alert alert-danger" th:text="${registrationError}"></div>
+
+        <!-- Show success message after registration -->
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <!-- Bind to "registrationForm" so fields re-fill if there's a validation error -->
+        <form th:action="@{/register}" th:object="${registrationForm}" method="post">
+
+          <!-- If using Spring Security with CSRF -->
+          <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
+
           <div class="row mb-3">
             <div class="col">
-              <label for="firstName" class="form-label">First Name</label>
-              <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
+              <label for="username" class="form-label">Username</label>
+              <input type="text"
+                     class="form-control"
+                     id="username"
+                     th:field="*{username}"
+                     placeholder="Your handle">
+              <p class="text-danger" th:if="${#fields.hasErrors('username')}"
+                 th:errors="*{username}">Username error</p>
             </div>
             <div class="col">
               <label for="lastName" class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
+              <input type="text"
+                     class="form-control"
+                     id="lastName"
+                     th:field="*{lastName}"
+                     placeholder="Your last name">
+              <p class="text-danger" th:if="${#fields.hasErrors('lastName')}"
+                 th:errors="*{lastName}">Last Name error</p>
             </div>
           </div>
+
           <div class="mb-3">
             <label for="registerEmail" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="registerEmail" placeholder="name@example.com" required>
+            <input type="email"
+                   class="form-control"
+                   id="registerEmail"
+                   th:field="*{email}"
+                   placeholder="name@example.com">
+            <p class="text-danger" th:if="${#fields.hasErrors('email')}"
+               th:errors="*{email}">Email error</p>
           </div>
+
           <div class="mb-3">
             <label for="registerPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="registerPassword" placeholder="Password" required>
+            <input type="password"
+                   class="form-control"
+                   id="registerPassword"
+                   th:field="*{password}"
+                   placeholder="At least 6 characters">
+            <p class="text-danger" th:if="${#fields.hasErrors('password')}"
+               th:errors="*{password}">Password error</p>
           </div>
+
           <div class="mb-3">
             <label for="userRole" class="form-label">Register as</label>
-            <select class="form-select" id="userRole" required>
-              <option selected disabled value="">Choose...</option>
-              <option>Student</option>
-              <option>Instructor</option>
+            <select class="form-select"
+                    id="userRole"
+                    th:field="*{role}">
+              <option disabled value="">Choose...</option>
+              <option value="STUDENT">Student</option>
+              <option value="INSTRUCTOR">Instructor</option>
             </select>
+            <p class="text-danger" th:if="${#fields.hasErrors('role')}"
+               th:errors="*{role}">Role error</p>
           </div>
+
           <button type="submit" class="btn btn-success w-100">Register</button>
-          <p class="mt-3 text-center">Already have an account? <a href="#login">Login here</a></p>
+          <p class="mt-3 text-center">
+            Already have an account? <a href="#login">Login here</a>
+          </p>
         </form>
       </div>
     </div>
   </div>
 </section>
+
 
 <!-- Footer -->
 <footer class="footer text-center">
