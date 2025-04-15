@@ -12,4 +12,8 @@ public class LoginForm {
 
     @NotBlank(message = "Password cannot be empty")
     private String password;
+
+    public String getUsername() {
+        return null;
+    }
 }

@@ -3,6 +3,8 @@ package com.wspa.courses.Entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.mapping.Table;
+
 import java.time.LocalDateTime;
 
 @Entity

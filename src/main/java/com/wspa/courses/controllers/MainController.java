@@ -3,12 +3,15 @@ package com.wspa.courses.controllers;
 import com.wspa.courses.dtos.LoginForm;
 import com.wspa.courses.dtos.UserRegistration;
 import com.wspa.courses.services.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -80,5 +83,15 @@ public class MainController {
             redirectAttributes.addFlashAttribute("registrationError", "A user with that username or email already exists.");
             return "redirect:/#register";
         }
+    }
+
+    // NEW FEATURE: GET /logout => Process logout
+    @GetMapping("/logout")
+    public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
+        // Invalidate the session to log out the user
+        session.invalidate();
+        // Add a flash attribute to inform the user they have logged out
+        redirectAttributes.addFlashAttribute("logoutMessage", "You have been logged out successfully.");
+        return "redirect:/";
     }
 }
