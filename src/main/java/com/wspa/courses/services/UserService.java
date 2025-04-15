@@ -11,7 +11,7 @@ public class UserService {
     @Autowired
     private UsersRepository usersRepository;
 
-    // This method does a simple match check. In production, you'd hash passwords!
+    // This method does a simple match check. In production, I'd hash passwords!
     public boolean authenticate(String username, String password) {
         return usersRepository.findByUsername(username)
                 .map(user -> user.getPassword().equals(password))

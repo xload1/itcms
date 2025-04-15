@@ -3,6 +3,9 @@ package com.wspa.courses.controllers;
 import com.wspa.courses.dtos.LoginForm;
 import com.wspa.courses.dtos.UserRegistration;
 import com.wspa.courses.services.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,7 +37,8 @@ public class MainController {
     public String processLogin(
             @Valid @ModelAttribute("loginForm") LoginForm loginForm,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            HttpServletResponse response) {
 
         if (bindingResult.hasErrors()) {
             // Put errors & form data into flash attributes
@@ -46,7 +50,12 @@ public class MainController {
 
         boolean isAuthenticated = userService.authenticate(loginForm.getUsername(), loginForm.getPassword());
         if (isAuthenticated) {
-            // On success, you can redirect to some dashboard or reload main
+            Cookie userCookie = new Cookie("username", loginForm.getUsername());
+            userCookie.setPath("/");
+            userCookie.setMaxAge(60 * 60 * 24);
+            userCookie.setHttpOnly(true); // Prevent JavaScript access
+            userCookie.setSecure(true); // Use secure cookies in production
+            response.addCookie(userCookie);
             return "redirect:/";
         } else {
             // Add error message for invalid credentials
@@ -61,7 +70,6 @@ public class MainController {
             @Valid @ModelAttribute("registrationForm") UserRegistration registrationForm,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
-
         if (bindingResult.hasErrors()) {
             // Put errors & form data into flash attributes
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.registrationForm", bindingResult);
