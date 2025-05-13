@@ -1,4 +1,4 @@
-package com.wspa.courses.Entities;
+package com.wspa.courses.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;

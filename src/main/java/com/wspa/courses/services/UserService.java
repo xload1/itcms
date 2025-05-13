@@ -1,6 +1,6 @@
 package com.wspa.courses.services;
 
-import com.wspa.courses.Entities.Users;
+import com.wspa.courses.entities.Users;
 import com.wspa.courses.dtos.UserRegistration;
 import com.wspa.courses.repos.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;

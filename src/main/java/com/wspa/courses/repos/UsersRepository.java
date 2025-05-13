@@ -1,6 +1,6 @@
 package com.wspa.courses.repos;
 
-import com.wspa.courses.Entities.Users;
+import com.wspa.courses.entities.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
