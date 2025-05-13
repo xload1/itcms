@@ -1,8 +1,15 @@
-package main.java.com.wspa.courses.services;
+package com.wspa.courses.services;
+
+import com.wspa.courses.entities.Course;
+import com.wspa.courses.entities.Enrollment;
+import com.wspa.courses.entities.Users;
+import com.wspa.courses.repos.EnrollmentRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class EnrollmentService {
-
     private final EnrollmentRepository repo;
 
     public EnrollmentService(EnrollmentRepository repo) { this.repo = repo; }

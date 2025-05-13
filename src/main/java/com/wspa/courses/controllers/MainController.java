@@ -2,6 +2,7 @@ package com.wspa.courses.controllers;
 
 import com.wspa.courses.dtos.LoginForm;
 import com.wspa.courses.dtos.UserRegistration;
+import com.wspa.courses.entities.Enrollment;
 import com.wspa.courses.entities.Users;
 import com.wspa.courses.services.*;
 import jakarta.servlet.http.Cookie;
@@ -14,15 +15,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
 
     private final UserService        userService;
     private final CourseService      courseService;
-    private final EnrollmentService  enrollmentService;
+    private final EnrollmentService enrollmentService;
 
     public MainController(UserService userService,
                           CourseService courseService,
@@ -50,6 +54,20 @@ public class MainController {
                            @RequestParam Optional<String> duration,
                            HttpServletRequest request,
                            Model model) {
+
+
+        currentUser(request).ifPresent(u -> {
+            model.addAttribute("currentUser", u);
+            List<Enrollment> list = enrollmentService.forUser(u);
+            model.addAttribute("enrollments", list);
+
+            // ➊  карта courseId → Enrollment
+            Map<Long, Enrollment> enrollMap = list.stream()
+                    .collect(Collectors.toMap(
+                            e -> e.getCourse().getId(),
+                            e -> e));
+            model.addAttribute("enrollMap", enrollMap);
+        });
 
         // filters back to page
         model.addAttribute("selectedLevel",    level.orElse(""));

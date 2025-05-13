@@ -1,15 +1,23 @@
 package com.wspa.courses.services;
 
+import com.wspa.courses.entities.Course;
 import com.wspa.courses.entities.Users;
 import com.wspa.courses.dtos.UserRegistration;
+import com.wspa.courses.repos.CourseRepository;
 import com.wspa.courses.repos.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private CourseRepository courseRepository;
+    @Autowired
+    private EnrollmentService enrollmentService;
 
     // This method does a simple match check. In production, I'd hash passwords!
     public boolean authenticate(String username, String password) {
@@ -41,7 +49,7 @@ public class UserService {
     }
 
     public void enrollUserToCourse(Users user, Long courseId) {
-        Course course = courseRepo.findById(courseId)
+        Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));
         enrollmentService.enrollIfAbsent(user, course);
     }

@@ -49,6 +49,29 @@
         <li class="nav-item">
           <a class="nav-link btn btn-primary text-white ms-2" href="#register">Register</a>
         </li>
+        <!-- ➊  если пользователь не залогинен -->
+        <li class="nav-item" th:if="${currentUser == null}">
+          <a class="nav-link" href="#login">Login</a>
+        </li>
+        <li class="nav-item" th:if="${currentUser == null}">
+          <a class="nav-link btn btn-primary text-white ms-2" href="#register">Register</a>
+        </li>
+
+        <!-- ➋  если залогинен — приветствие и logout -->
+        <li class="nav-item dropdown" th:if="${currentUser != null}">
+          <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false"
+             th:text="'Hi, ' + ${currentUser.username}">Hi, user</a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+            <li><a class="dropdown-item" href="#dashboard">Dashboard</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form th:action="@{/logout}" method="post" class="px-3">
+                <button class="btn btn-sm btn-outline-danger w-100">Logout</button>
+              </form>
+            </li>
+          </ul>
+        </li>
       </ul>
     </div>
   </div>
@@ -71,7 +94,7 @@
 </section>
 
 <!-- Courses Section -->
-<section id="courses" class="section">
+<section id="courses" class="section" th:if="${currentUser!=''}">
   <div class="container">
     <h2 class="text-center mb-5">Course Catalog</h2>
 
@@ -103,20 +126,25 @@
       <div th:each="course : ${courses}" class="col-md-4 mb-4">
         <div class="card h-100">
           <div class="card-body">
-            <h5 class="card-title"   th:text="${course.title}">Title</h5>
-            <p  class="card-text"    th:text="${course.description}">Desc</p>
+            <h5 th:text="${course.title}"  class="card-title">Title</h5>
+            <p  th:text="${course.description}" class="card-text">Desc</p>
             <p><strong>Duration:</strong>
               <span th:text="${course.durationMonths}">0</span> months</p>
 
-            <!-- progress for current user -->
-            <div th:with="enroll=${#lists.findFirst(enrollments, e -> e.course.id == course.id)}">
-              <div class="progress mb-2">
+            <!-- ➋  достаём Enrollment напрямую из карты -->
+            <div th:with="enroll=${enrollMap[course.id]}">
+
+              <div class="progress mb-2" style="height: 1.25rem;">
                 <div class="progress-bar"
                      role="progressbar"
-                     th:style="'width:' + (enroll != null ? enroll.progress : 0) + '%;'"
-                     th:text="|${enroll != null ? enroll.progress : 0}%|">
-                </div>
+                th:style="|width: ${enroll != null ? enroll.progress : 0}%;|"
+
+                th:aria-valuenow="${enroll != null ? enroll.progress : 0}"
+                aria-valuemin="0" aria-valuemax="100"
+                th:text="|${enroll != null ? enroll.progress : 0}%|">
               </div>
+            </div>
+
 
               <form th:action="@{'/enroll/' + ${course.id}}" method="post">
                 <button class="btn btn-primary w-100"
