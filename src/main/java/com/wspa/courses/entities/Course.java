@@ -3,17 +3,15 @@ package com.wspa.courses.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "courses")
-@Data
-@NoArgsConstructor
+@Data @NoArgsConstructor
 public class Course {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
@@ -21,22 +19,16 @@ public class Course {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    /* --- relationships --- */
+    /** Beginner / Intermediate / Advanced  */
+    private String level;
 
-    /** Teacher who owns the course */
+    /** How many months the course lasts (for filtering) */
+    private Integer durationMonths;
+
+    /* FK → instructor */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instructor_id", nullable = false)
     private Users instructor;
-
-    /** Convenience collections (optional) */
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Assignment> assignments;
-
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Material> materials;
-
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Enrollment> enrollments;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }
