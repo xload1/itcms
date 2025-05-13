@@ -36,4 +36,13 @@ public class UserService {
 
         return true;
     }
+    public Optional<Users> findByUsername(String username) {
+        return usersRepository.findByUsername(username);
+    }
+
+    public void enrollUserToCourse(Users user, Long courseId) {
+        Course course = courseRepo.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        enrollmentService.enrollIfAbsent(user, course);
+    }
 }
