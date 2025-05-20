@@ -1,5 +1,6 @@
 package com.wspa.courses.services;
 
+import com.wspa.courses.CoursesApplication;
 import com.wspa.courses.entities.Course;
 import com.wspa.courses.repos.CourseRepository;
 import org.springframework.stereotype.Service;
@@ -28,5 +29,8 @@ public class CourseService {
                         })
                         .collect(Collectors.toList()))
                 .orElse(base);
+    }
+    public Optional<Course> findById(Long id){
+        return repo.findById(id);
     }
 }

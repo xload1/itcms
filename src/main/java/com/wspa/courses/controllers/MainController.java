@@ -2,6 +2,7 @@ package com.wspa.courses.controllers;
 
 import com.wspa.courses.dtos.LoginForm;
 import com.wspa.courses.dtos.UserRegistration;
+import com.wspa.courses.entities.Course;
 import com.wspa.courses.entities.Enrollment;
 import com.wspa.courses.entities.Users;
 import com.wspa.courses.services.*;
@@ -9,13 +10,16 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,12 +32,16 @@ public class MainController {
     private final CourseService      courseService;
     private final EnrollmentService enrollmentService;
 
+    private final MaterialService materialService;
+
     public MainController(UserService userService,
                           CourseService courseService,
-                          EnrollmentService enrollmentService) {
+                          EnrollmentService enrollmentService,
+                          MaterialService materialService) {
         this.userService = userService;
         this.courseService = courseService;
         this.enrollmentService = enrollmentService;
+        this.materialService = materialService;
     }
 
     /* ---------- helpers ---------- */
@@ -56,7 +64,7 @@ public class MainController {
                            Model model) {
 
 
-        currentUser(request).ifPresent(u -> {
+        currentUser(request).ifPresentOrElse(u -> {
             model.addAttribute("currentUser", u);
             List<Enrollment> list = enrollmentService.forUser(u);
             model.addAttribute("enrollments", list);
@@ -67,6 +75,9 @@ public class MainController {
                             e -> e.getCourse().getId(),
                             e -> e));
             model.addAttribute("enrollMap", enrollMap);
+        },()->{
+
+            model.addAttribute("enrollMap", Collections.emptyMap());
         });
 
         // filters back to page
@@ -171,5 +182,23 @@ public class MainController {
         }
         userService.enrollUserToCourse(userOpt.get(), courseId);  // simple wrapper
         return "redirect:/#dashboard";
+    }
+
+    @GetMapping("/courses/{courseId}")
+    public String showCourse(@PathVariable Long courseId,
+                             HttpServletRequest req,
+                             Model model) {
+
+        Course course = courseService.findById(courseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        model.addAttribute("course", course);
+        model.addAttribute("static/materials", materialService.forCourse(course.getId()));
+
+        System.out.println(materialService.forCourse(Long.parseLong("13")).size());
+        // если нужен текущий пользователь (для навбара / приветствия)
+        currentUser(req).ifPresent(u -> model.addAttribute("currentUser", u));
+
+        return "course";  // course.html
     }
 }

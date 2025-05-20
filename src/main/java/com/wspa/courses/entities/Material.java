@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "materials")
+@Table(name = "static/materials")
 @Data
 @NoArgsConstructor
 public class Material {
