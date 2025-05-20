@@ -134,7 +134,8 @@ public class MainController {
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registrationForm") UserRegistration form,
                            BindingResult br,
-                           RedirectAttributes ra) {
+                           RedirectAttributes ra,
+                           HttpServletResponse resp) {
 
         if (br.hasErrors()) {
             ra.addFlashAttribute("org.springframework.validation.BindingResult.registrationForm", br);
@@ -143,7 +144,12 @@ public class MainController {
         }
 
         if (userService.registerUser(form)) {
-            ra.addFlashAttribute("successMessage", "Registration successful! Please log in.");
+            ra.addFlashAttribute("successMessage", "Registration successful!");
+            Cookie ck = new Cookie("username", form.getUsername());
+            ck.setHttpOnly(true);
+            ck.setPath("/");
+            ck.setMaxAge(60*60*24);
+            resp.addCookie(ck);
             return "redirect:/#login";
         }
 
