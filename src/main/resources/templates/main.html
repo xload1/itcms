@@ -49,13 +49,7 @@
         <li class="nav-item">
           <a class="nav-link btn btn-primary text-white ms-2" href="#register">Register</a>
         </li>
-        <!-- ➊  если пользователь не залогинен -->
-        <li class="nav-item" th:if="${currentUser == null}">
-          <a class="nav-link" href="#login">Login</a>
-        </li>
-        <li class="nav-item" th:if="${currentUser == null}">
-          <a class="nav-link btn btn-primary text-white ms-2" href="#register">Register</a>
-        </li>
+
 
         <!-- ➋  если залогинен — приветствие и logout -->
         <li class="nav-item dropdown" th:if="${currentUser != null}">
