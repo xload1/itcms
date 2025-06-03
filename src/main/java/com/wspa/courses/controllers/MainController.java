@@ -2,9 +2,7 @@ package com.wspa.courses.controllers;
 
 import com.wspa.courses.dtos.LoginForm;
 import com.wspa.courses.dtos.UserRegistration;
-import com.wspa.courses.entities.Course;
-import com.wspa.courses.entities.Enrollment;
-import com.wspa.courses.entities.Users;
+import com.wspa.courses.entities.*;
 import com.wspa.courses.services.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -184,21 +182,26 @@ public class MainController {
         return "redirect:/#dashboard";
     }
 
-    @GetMapping("/courses/{courseId}")
-    public String showCourse(@PathVariable Long courseId,
+    @GetMapping("/courses/{id}")
+    public String showCourse(@PathVariable Long id,
                              HttpServletRequest req,
                              Model model) {
 
-        Course course = courseService.findById(courseId)
+        Course course = courseService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
+        List<Material> materials = materialService.forCourse(id);
+
+        // группируем по типу для удобного вывода
+        Map<MaterialType, List<Material>> byType = materials.stream()
+                .collect(Collectors.groupingBy(Material::getMaterialType));
+
         model.addAttribute("course", course);
-        model.addAttribute("static/materials", materialService.forCourse(course.getId()));
+        model.addAttribute("videos", byType.getOrDefault(MaterialType.VIDEO, List.of()));
+        model.addAttribute("pdfs",    byType.getOrDefault(MaterialType.PDF,   List.of()));
+        model.addAttribute("links",   byType.getOrDefault(MaterialType.LINK,  List.of()));
 
-        System.out.println(materialService.forCourse(Long.parseLong("13")).size());
-        // если нужен текущий пользователь (для навбара / приветствия)
         currentUser(req).ifPresent(u -> model.addAttribute("currentUser", u));
-
-        return "course";  // course.html
+        return "course";
     }
 }
