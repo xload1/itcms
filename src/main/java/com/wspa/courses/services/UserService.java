@@ -53,4 +53,9 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));
         enrollmentService.enrollIfAbsent(user, course);
     }
+    public void disenrollUserFromCourse(Users user, Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        enrollmentService.disenrollIfPresent(user, course);
+    }
 }

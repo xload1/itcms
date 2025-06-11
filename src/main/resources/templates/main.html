@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -166,7 +166,7 @@
 
     <h4 class="mb-3">My Courses</h4>
     <table class="table table-striped" th:if="${#lists.isEmpty(enrollments) == false}">
-      <thead><tr><th>Course</th><th>Progress</th><th>Enrolled</th><th>View</th></tr></thead>
+      <thead><tr><th>Course</th><th>Progress</th><th>Enrolled</th><th>View</th><th>Leave Course</th></tr></thead>
       <tbody>
       <tr th:each="en : ${enrollments}">
         <td th:text="${en.course.title}">title</td>
@@ -181,6 +181,12 @@
         <td th:text="${#temporals.format(en.enrolledAt,'yyyy-MM-dd')}">date</td>
         <td><a class="btn btn-primary w-100"
                th:href="@{'/courses/' + ${en.course.id}}">View</a></td>
+        <td>
+          <form method="post" th:action="'/disenroll/' + ${en.course.id}">
+            <input type="submit" class="btn btn-primary w-100" style="background-color: orangered"
+                   value="Disenroll"/>
+          </form>
+        </td>
       </tr>
       </tbody>
     </table>

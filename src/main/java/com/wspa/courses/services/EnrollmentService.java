@@ -25,4 +25,8 @@ public class EnrollmentService {
                     return repo.save(e);
                 });
     }
+    public void disenrollIfPresent(Users user, Course course) {
+        repo.findByStudentAndCourseId(user, course.getId())
+                .ifPresent(repo::delete);
+    }
 }

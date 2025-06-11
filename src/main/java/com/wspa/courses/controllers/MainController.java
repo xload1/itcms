@@ -204,4 +204,17 @@ public class MainController {
         currentUser(req).ifPresent(u -> model.addAttribute("currentUser", u));
         return "course";
     }
+    @PostMapping("/disenroll/{courseId}")
+    public String disenroll(@PathVariable Long courseId,
+                           HttpServletRequest req,
+                           RedirectAttributes ra) {
+
+        Optional<Users> userOpt = currentUser(req);
+        if (userOpt.isEmpty()) {
+            ra.addFlashAttribute("loginError", "Please log in first");
+            return "redirect:/#login";
+        }
+        userService.disenrollUserFromCourse(userOpt.get(), courseId);
+        return "redirect:/#dashboard";
+    }
 }
